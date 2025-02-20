@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
-import 'package:srmone/component/navbar.dart';
-import 'package:srmone/screen/branch.dart';
+import 'package:srm_exam_x/component/branch_card.dart';
+import 'package:srm_exam_x/component/navbar.dart';
+import 'package:srm_exam_x/component/notification_bell.dart';
+import 'package:srm_exam_x/component/student_review.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,95 +21,87 @@ class _HomeScreenState extends State<HomeScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              // Reduced Navbar Height
-              AnimatedContainer(
-                duration: const Duration(seconds: 1),
-                height: MediaQuery.of(context).size.height / 10,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF003D99),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  double navbarHeight = constraints.maxWidth > 600 ? 80 : 60;
+                  return AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    height: navbarHeight,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF003D99),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Image.network(
-                            "https://imgs.search.brave.com/7ht6JzSCc7AdtL8to5Qr6UkmftyTOqOcq5Uv5yBl-r0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sb2dv/ZGl4LmNvbS9sb2dv/LzE3ODcwNDAucG5n",
-                            height: 60,
+                          Row(
+                            children: [
+                              Image.asset(
+                                'assets/srm_logo.png',
+                                height: navbarHeight * 0.8,
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                "SRM University",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            "SRM University",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          IconButton(
+                            icon: const Icon(Icons.notifications,
+                                color: Colors.white, size: 24),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const LatestPaperDrawer(),
+                              );
+                            },
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.notifications,
-                            color: Colors.white, size: 24),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-              // Main Content
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 16),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
                       child: const Text(
                         "Previous Year Question Papers",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFFFFA500),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Select Branch",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // ✅ Image Slider Replacing Text Slider
                     CarouselSlider(
                       options: CarouselOptions(
-                        height: 180, // Adjust height as needed
+                        height:
+                            MediaQuery.of(context).size.width > 600 ? 250 : 180,
                         autoPlay: true,
                         enlargeCenterPage: true,
                       ),
-                      items: [
-                        "assets/srm.png", // Use your actual asset image
-                      ]
+                      items: ["assets/srm.png"]
                           .map((imagePath) => ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.asset(
@@ -118,22 +112,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               ))
                           .toList(),
                     ),
-
+                    const SizedBox(height: 20),
+                    InteractiveTitle(title: "Select Branch"),
                     const SizedBox(height: 16),
-                    // Branch Grid with Responsive Adjustments
                     const BranchSelection(),
-                    const SizedBox(height: 16),
-                    // Random Student Reviews Section
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      color: Colors.blueGrey.shade100,
-                      child: Text(
-                        "Students love this platform! \"It made finding past papers super easy!\" - Ankit R.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16, fontStyle: FontStyle.italic),
-                      ),
-                    ),
+                    InteractiveTitle(title: "Student Review"),
+                    StudentReviews(),
                   ],
                 ),
               ),
@@ -150,58 +134,78 @@ class BranchSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(8.0),
-      children: [
-        BranchCard(label: "BCA", icon: Icons.computer),
-        BranchCard(label: "B.Tech", icon: Icons.engineering),
-        BranchCard(label: "BBA", icon: Icons.business),
-        BranchCard(label: "BCom", icon: Icons.account_balance),
-      ],
+    int crossAxisCount = MediaQuery.of(context).size.width > 800
+        ? 4
+        : MediaQuery.of(context).size.width > 600
+            ? 3
+            : 2;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(8.0),
+          children: const [
+            BranchCard(label: "BCA", icon: Icons.computer),
+            BranchCard(label: "B.Tech", icon: Icons.engineering),
+            BranchCard(label: "BBA", icon: Icons.business),
+            BranchCard(label: "BCom", icon: Icons.account_balance),
+          ],
+        );
+      },
     );
   }
 }
 
-class BranchCard extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  const BranchCard({required this.label, required this.icon, super.key});
+class InteractiveTitle extends StatefulWidget {
+  final String title;
+  const InteractiveTitle({super.key, required this.title});
+
+  @override
+  _InteractiveTitleState createState() => _InteractiveTitleState();
+}
+
+class _InteractiveTitleState extends State<InteractiveTitle>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-      closedElevation: 5,
-      closedShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      transitionDuration: const Duration(milliseconds: 500),
-      closedColor: Color(0xFF003D99),
-      closedBuilder: (context, action) => Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.white),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Text(
+        widget.title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+          decorationColor: Color(0xFFFFA500),
+          color: Color(0xFFFFA500),
         ),
-      ),
-      openBuilder: (context, action) => Branch(
-        branchName: label,
       ),
     );
   }

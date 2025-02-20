@@ -1,4 +1,4 @@
-package com.example.srmone
+package com.srmpyq
 
 import io.flutter.embedding.android.FlutterActivity
 

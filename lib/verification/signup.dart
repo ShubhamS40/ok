@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:srmone/verification/login.dart';
+import 'package:srm_exam_x/verification/login.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -24,7 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => isLoading = true);
 
     final response = await http.post(
-      Uri.parse("http://3.109.21.20:3000/api/signup"),
+      Uri.parse("http://13.232.59.110:3000/api/signup"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": _nameController.text.trim(),

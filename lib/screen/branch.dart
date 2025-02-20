@@ -37,7 +37,7 @@ class _BranchState extends State<Branch> {
   Future<void> fetchYears() async {
     try {
       final response =
-          await http.get(Uri.parse("http://3.109.21.20:3000/get-year"));
+          await http.get(Uri.parse("http://13.232.59.110:3000/get-year"));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data is Map && data.containsKey("year") && data["year"] is List) {
@@ -58,7 +58,7 @@ class _BranchState extends State<Branch> {
   Future<void> fetchSemesters() async {
     try {
       final response =
-          await http.get(Uri.parse("http://3.109.21.20:3000/get-semester"));
+          await http.get(Uri.parse("http://13.232.59.110:3000/get-semester"));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data is Map &&
@@ -81,7 +81,7 @@ class _BranchState extends State<Branch> {
   Future<void> fetchSubjects() async {
     try {
       final response =
-          await http.get(Uri.parse("http://3.109.21.20:3000/get-subject"));
+          await http.get(Uri.parse("http://13.232.59.110:3000/get-subject"));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data is List) {
@@ -107,7 +107,7 @@ class _BranchState extends State<Branch> {
       return;
     }
 
-    final url = Uri.parse("http://3.109.21.20:3000/api/paper");
+    final url = Uri.parse("http://13.232.59.110:3000/api/paper");
     final requestBody = {
       "branchName": widget.branchName,
       "specializationName": selectedSpecialization,

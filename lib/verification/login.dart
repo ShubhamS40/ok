@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:srmone/component/navbar.dart';
-import 'package:srmone/verification/signup.dart';
+import 'package:srm_exam_x/component/navbar.dart';
+import 'package:srm_exam_x/verification/auth_service.dart';
+import 'package:srm_exam_x/verification/signup.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   void login() async {
     setState(() => isLoading = true);
 
-    final url = Uri.parse("http://3.109.21.20:3000/api/login");
+    final url = Uri.parse("http://13.232.59.110:3000/api/login");
 
     try {
       final response = await http.post(
@@ -50,8 +53,34 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void loginWithGoogle() {
-    print("Google Sign-in");
+  Future<void> loginWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId:
+            "686267504344-19vbqgdt8benue5i4l7fp9npqir5et09.apps.googleusercontent.com",
+      );
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Navbar()),
+      );
+    } catch (error) {
+      print(error);
+      _showErrorDialog("Google Sign-In failed: ${error.toString()}");
+    }
   }
 
   void loginWithGitHub() {

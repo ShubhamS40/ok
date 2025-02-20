@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:srmone/component/navbar.dart';
-import 'package:srmone/screen/branch.dart';
-import 'package:srmone/screen/home.dart';
-import 'package:srmone/splashscreen/splashscreen.dart';
-import 'package:srmone/verification/signup.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:srm_exam_x/firebase_options.dart';
+import 'package:srm_exam_x/screen/home.dart';
+import 'package:srm_exam_x/splashscreen/splashscreen.dart';
+import 'package:srm_exam_x/verification/login.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(),
-        home: SplashScreen());
+      debugShowCheckedModeBanner: false,
+      title: 'SRM Exam X',
+      theme: ThemeData(),
+      home: SplashScreen(), // Ensure LoginPage is defined
+    );
   }
 }

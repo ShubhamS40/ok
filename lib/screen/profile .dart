@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:srmone/verification/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:srm_exam_x/verification/login.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String name;
@@ -18,53 +20,90 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  void logout(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      // Check if user is logged in via Google
+      if (_auth.currentUser != null) {
+        for (var userInfo in _auth.currentUser!.providerData) {
+          if (userInfo.providerId == "google.com") {
+            await GoogleSignIn().signOut();
+          }
+        }
+        await _auth.signOut();
+      }
+
+      // Navigate to Login Page after Logout
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
+    } catch (e) {
+      print("Error logging out: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: const Color(0xFF003D99),
         title: const Text("Profile", style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
-
-            // Profile Icon with Edit Button
-            Center(
-              child: Stack(
+            // SRM Logo
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              decoration: const BoxDecoration(
+                color: Color(0xFF003D99),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20)),
+              ),
+              child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, size: 50, color: Colors.white),
+                  Image.asset(
+                    "assets/srm_logo.png",
+                    height: 80,
+                    fit: BoxFit.contain,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
+                  const SizedBox(height: 10),
+                  // Profile Avatar with Edit Button
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Colors.blue[200],
+                        child: const Icon(Icons.person,
+                            size: 60, color: Colors.white),
                       ),
-                      child: IconButton(
-                        icon: const Icon(Icons.edit,
-                            color: Colors.white, size: 20),
-                        onPressed: () {
-                          // TODO: Add profile update logic
-                        },
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: InkWell(
+                          onTap: () {
+                            // TODO: Implement Profile Edit Feature
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.edit,
+                                color: Colors.white, size: 18),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -72,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 20),
 
-            // Profile Information
+            // User Information
             ProfileInfoTile(
                 icon: Icons.person, title: "Name", value: widget.name),
             ProfileInfoTile(
@@ -83,15 +122,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 30),
 
             // Logout Button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text(
+                    "Logout",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  onPressed: () => logout(context),
+                ),
               ),
-              onPressed: () => logout(context),
-              child: const Text("Logout",
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
             ),
           ],
         ),
@@ -114,17 +164,23 @@ class ProfileInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF003D99)),
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Card(
+        elevation: 3,
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          leading: Icon(icon, color: const Color(0xFF003D99), size: 30),
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            value,
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
+          ),
         ),
-        subtitle: Text(value,
-            style: const TextStyle(fontSize: 14, color: Colors.black54)),
       ),
     );
   }

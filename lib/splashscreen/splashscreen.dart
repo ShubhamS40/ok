@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:srmone/screen/home.dart';
-import 'package:srmone/verification/login.dart';
+import 'package:srm_exam_x/screen/home.dart';
+import 'package:srm_exam_x/verification/login.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -40,8 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // SRM Logo
-            Image.network(
-              "https://imgs.search.brave.com/7ht6JzSCc7AdtL8to5Qr6UkmftyTOqOcq5Uv5yBl-r0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sb2dv/ZGl4LmNvbS9sb2dv/LzE3ODcwNDAucG5n",
+            Image.asset(
+              'assets/srm_logo.png',
               height: 120,
             ),
             SizedBox(height: 20),

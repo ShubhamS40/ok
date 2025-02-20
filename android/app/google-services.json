@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "686267504344",
+    "project_id": "srmpyq-b50ed",
+    "storage_bucket": "srmpyq-b50ed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686267504344:android:615b3ebd2be2f8a565a9ad",
+        "android_client_info": {
+          "package_name": "com.shubham.srmpyq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686267504344-19vbqgdt8benue5i4l7fp9npqir5et09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe5Hz9OEAVUPKg6aEJbnzwgwmCCtvqLBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686267504344-19vbqgdt8benue5i4l7fp9npqir5et09.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "686267504344-9bcct5cvm64b28pn5ca7erfvi80ta7b0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.srmone"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686267504344:android:e1ced8e9b0b16ccf65a9ad",
+        "android_client_info": {
+          "package_name": "com.srmpyq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686267504344-3502avt04kku33h5jf2man1m4lb99c1f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.srmpyq",
+            "certificate_hash": "e5d4a6d37b58470e5c3e4e51577de646929523a4"
+          }
+        },
+        {
+          "client_id": "686267504344-19vbqgdt8benue5i4l7fp9npqir5et09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe5Hz9OEAVUPKg6aEJbnzwgwmCCtvqLBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "686267504344-19vbqgdt8benue5i4l7fp9npqir5et09.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "686267504344-9bcct5cvm64b28pn5ca7erfvi80ta7b0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.srmone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
