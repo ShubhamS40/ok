@@ -3,10 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:srm_exam_x/component/navbar.dart';
-import 'package:srm_exam_x/verification/auth_service.dart';
-import 'package:srm_exam_x/verification/signup.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:srm_exam_x/component/navbar.dart';
+import 'package:srm_exam_x/screen/home.dart';
+// Import ProfileScreen
+import 'package:srm_exam_x/screen/profile%20.dart';
+import 'package:srm_exam_x/verification/signup.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   void login() async {
     setState(() => isLoading = true);
 
-    final url = Uri.parse("http://13.232.59.110:3000/api/login");
+    final url = Uri.parse("http://13.203.192.194:3000/api/login");
 
     try {
       final response = await http.post(
@@ -36,11 +38,28 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       final responseData = jsonDecode(response.body);
+      print(responseData);
 
       if (response.statusCode == 200) {
+        // Extract user details
+        String name = responseData['username'] ?? 'Unknown';
+        String email = responseData['email'] ?? emailController.text.trim();
+        String role = responseData['role'] ?? 'User';
+
+        // Pass user data to ProfileScreen (just creating object, not navigating)
+        ProfileScreen profileScreen =
+            ProfileScreen(name: name, email: email, role: role);
+
+        // Redirect to Navbar
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Navbar()),
+          MaterialPageRoute(
+            builder: (context) => Navbar(
+              name: name,
+              email: email,
+              role: role,
+            ), // Pass profile data
+          ),
         );
       } else {
         _showErrorDialog(
@@ -71,20 +90,28 @@ class _LoginPageState extends State<LoginPage> {
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      User? user = userCredential.user;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Navbar()),
-      );
+      if (user != null) {
+        String name = user.displayName ?? "Google User";
+        String email = user.email ?? "No Email Provided";
+        String role =
+            "Google User"; // You can modify this based on your app logic
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ProfileScreen(name: name, email: email, role: role),
+          ),
+        );
+      }
     } catch (error) {
       print(error);
       _showErrorDialog("Google Sign-In failed: ${error.toString()}");
     }
-  }
-
-  void loginWithGitHub() {
-    print("GitHub Sign-in");
   }
 
   void _showErrorDialog(String message) {
@@ -106,7 +133,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(
@@ -122,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
 
                     // SRM Logo
                     SizedBox(
-                      height: screenHeight * 0.3, // Responsive image size
+                      height: screenHeight * 0.3,
                       child: Image.asset(
                         "assets/ok.png",
                         fit: BoxFit.contain,
@@ -134,18 +160,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 10),
 
-                    // Title
                     const Text(
                       "Welcome Back!",
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0E17D2),
-                      ),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0E17D2)),
                     ),
                     const SizedBox(height: 8),
 
-                    // Subtitle
                     const Text(
                       "Login to continue to Previous Year Question Paper App",
                       textAlign: TextAlign.center,
@@ -165,8 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: const Icon(Icons.email,
                                   color: Color(0xFF0E17D2)),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                             keyboardType: TextInputType.emailAddress,
                           ),
@@ -178,8 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                               prefixIcon: const Icon(Icons.lock,
                                   color: Color(0xFF0E17D2)),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                                  borderRadius: BorderRadius.circular(8)),
                             ),
                             obscureText: true,
                           ),
@@ -194,8 +215,8 @@ class _LoginPageState extends State<LoginPage> {
                       child: ElevatedButton(
                         onPressed: isLoading ? null : login,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0E17D2),
-                          padding: EdgeInsets.symmetric(vertical: 14.0),
+                          backgroundColor: const Color(0xFF0E17D2),
+                          padding: const EdgeInsets.symmetric(vertical: 14.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -203,28 +224,10 @@ class _LoginPageState extends State<LoginPage> {
                         child: isLoading
                             ? const CircularProgressIndicator(
                                 color: Colors.white)
-                            : const Text(
-                                "Login",
+                            : const Text("Login",
                                 style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
+                                    fontSize: 16, color: Colors.white)),
                       ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    // OR Divider
-                    Row(
-                      children: [
-                        Expanded(
-                            child: Divider(thickness: 1, color: Colors.grey)),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text("OR",
-                              style: TextStyle(color: Colors.black54)),
-                        ),
-                        Expanded(
-                            child: Divider(thickness: 1, color: Colors.grey)),
-                      ],
                     ),
                     const SizedBox(height: 15),
 
@@ -236,13 +239,6 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: loginWithGoogle,
                           icon: const FaIcon(FontAwesomeIcons.google,
                               color: Colors.red),
-                          iconSize: 30,
-                        ),
-                        const SizedBox(width: 20),
-                        IconButton(
-                          onPressed: loginWithGitHub,
-                          icon: const FaIcon(FontAwesomeIcons.github,
-                              color: Colors.black),
                           iconSize: 30,
                         ),
                       ],

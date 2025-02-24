@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:srm_exam_x/screen/home.dart';
 import 'package:srm_exam_x/screen/profile%20.dart';
+
 import 'package:srm_exam_x/screen/upload.dart';
 
 class Navbar extends StatefulWidget {
-  const Navbar({super.key});
+  final String name;
+  final String email;
+  final String role;
+
+  const Navbar(
+      {super.key, required this.name, required this.email, required this.role});
 
   @override
   State<Navbar> createState() => _NavbarState();
@@ -13,16 +19,6 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   late AnimationController _animationController;
-
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    UploadPaperPage(),
-    ProfileScreen(
-      name: "John Doe",
-      email: "john.doe@example.com",
-      role: "Student",
-    ),
-  ];
 
   @override
   void initState() {
@@ -42,10 +38,20 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomeScreen(),
+      UploadPaperPage(),
+      ProfileScreen(
+        name: widget.name,
+        email: widget.email,
+        role: widget.role,
+      ),
+    ];
+
     return Scaffold(
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: _pages[_selectedIndex],
+        child: pages[_selectedIndex],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

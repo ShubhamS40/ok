@@ -32,7 +32,7 @@ class StudentReviews extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.amber,
             ),
           ),
           SizedBox(height: 12),

@@ -16,6 +16,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _registrationNoController =
+      TextEditingController();
   bool isLoading = false;
 
   Future<void> _signUp() async {
@@ -24,12 +26,13 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() => isLoading = true);
 
     final response = await http.post(
-      Uri.parse("http://13.232.59.110:3000/api/signup"),
+      Uri.parse("http://13.203.192.194:3000/api/signup"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "name": _nameController.text.trim(),
         "email": _emailController.text.trim(),
         "password": _passwordController.text.trim(),
+        "registrationNo": _registrationNoController.text.trim(),
       }),
     );
 
@@ -47,18 +50,6 @@ class _SignUpPageState extends State<SignUpPage> {
         SnackBar(content: Text(error)),
       );
     }
-  }
-
-  void _signInWithGoogle() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Google Sign-Up Coming Soon!")),
-    );
-  }
-
-  void _signInWithGitHub() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("GitHub Sign-Up Coming Soon!")),
-    );
   }
 
   @override
@@ -121,6 +112,19 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         SizedBox(height: 10),
                         TextFormField(
+                          controller: _registrationNoController,
+                          decoration: InputDecoration(
+                            labelText: "Registration Number",
+                            prefixIcon:
+                                Icon(Icons.badge, color: Color(0xFF0E17D2)),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value!.isEmpty
+                              ? "Enter your registration number"
+                              : null,
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
                           controller: _passwordController,
                           decoration: InputDecoration(
                             labelText: "Password",
@@ -168,31 +172,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white)),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: _signInWithGoogle,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 18,
-                          child: FaIcon(FontAwesomeIcons.google,
-                              color: Colors.red, size: 24),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: _signInWithGitHub,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 18,
-                          child: FaIcon(FontAwesomeIcons.github,
-                              color: Colors.black, size: 24),
-                        ),
-                      ),
-                    ],
                   ),
                   SizedBox(height: 15),
                   TextButton(

@@ -11,22 +11,36 @@ class UploadPaperPage extends StatefulWidget {
 }
 
 class _UploadPaperPageState extends State<UploadPaperPage> {
+  final List<String> branches = ["btech", "law", "bca", "bcom"];
+  final List<String> years = ["YEAR_2023", "YEAR_2024", "YEAR_2025"];
+  final List<String> semesters = [
+    "SEM_1",
+    "SEM_2",
+    "SEM_3",
+    "SEM_4",
+    "SEM_5",
+    "SEM_6"
+  ];
+  final List<String> examTypes = ["END_TERM", "MAST_1", "MAST_2"];
+  final Map<String, List<String>> specializationOptions = {
+    "btech": ["CORE", "AIML", "DEVOPS"],
+    "law": ["BA_LLB", "BBA_LLB", "LLB"],
+    "bca": ["CORE"],
+    "bcom": ["HONS", "CORE"],
+  };
+
   String? selectedBranch;
   String? selectedSpecialization;
+  String? selectedYear;
+  String? selectedSemester;
+  String? selectedSubject;
   String? selectedExamType;
   Uint8List? fileBytes;
   String? selectedFileName;
   String successMessage = "";
   String errorMessage = "";
 
-  final TextEditingController semesterYearController = TextEditingController();
-  final TextEditingController semesterNumberController =
-      TextEditingController();
-  final TextEditingController subjectNameController = TextEditingController();
-  final TextEditingController paperTitleController = TextEditingController();
-  final TextEditingController paperYearController = TextEditingController();
-
-  void pickImage() async {
+  void pickFile() async {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -37,17 +51,17 @@ class _UploadPaperPageState extends State<UploadPaperPage> {
   }
 
   Future<void> uploadPaper() async {
-    if (selectedBranch == null ||
-        selectedSpecialization == null ||
-        selectedExamType == null ||
-        semesterYearController.text.isEmpty ||
-        semesterNumberController.text.isEmpty ||
-        subjectNameController.text.isEmpty ||
-        paperTitleController.text.isEmpty ||
-        paperYearController.text.isEmpty ||
+    if ([
+          selectedBranch,
+          selectedSpecialization,
+          selectedYear,
+          selectedSemester,
+          selectedSubject,
+          selectedExamType,
+        ].contains(null) ||
         fileBytes == null) {
       setState(() {
-        errorMessage = "Please fill all fields and select an image.";
+        errorMessage = "Please fill all fields and select a file.";
         successMessage = "";
       });
       return;
@@ -56,16 +70,14 @@ class _UploadPaperPageState extends State<UploadPaperPage> {
     try {
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("http://13.232.59.110:3000/api/create-paper"),
+        Uri.parse("http://13.203.192.194:3000/api/upload-paper"),
       );
-      request.fields["branchName"] = selectedBranch!;
-      request.fields["specializationName"] = selectedSpecialization!;
+      request.fields["branch"] = selectedBranch!;
+      request.fields["specialization"] = selectedSpecialization!;
+      request.fields["year"] = selectedYear!;
+      request.fields["semester"] = selectedSemester!;
+      request.fields["subject"] = selectedSubject!;
       request.fields["examType"] = selectedExamType!;
-      request.fields["semesterYear"] = semesterYearController.text;
-      request.fields["semesterNumber"] = semesterNumberController.text;
-      request.fields["subjectName"] = subjectNameController.text;
-      request.fields["paperTitle"] = paperTitleController.text;
-      request.fields["paperYear"] = paperYearController.text;
       request.files.add(http.MultipartFile.fromBytes(
         "file",
         fileBytes!,
@@ -97,14 +109,12 @@ class _UploadPaperPageState extends State<UploadPaperPage> {
     setState(() {
       selectedBranch = null;
       selectedSpecialization = null;
+      selectedYear = null;
+      selectedSemester = null;
+      selectedSubject = null;
       selectedExamType = null;
       fileBytes = null;
       selectedFileName = null;
-      semesterYearController.clear();
-      semesterNumberController.clear();
-      subjectNameController.clear();
-      paperTitleController.clear();
-      paperYearController.clear();
     });
   }
 
@@ -113,54 +123,59 @@ class _UploadPaperPageState extends State<UploadPaperPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Upload Paper"),
-        backgroundColor: const Color(0xFF003D99),
+        backgroundColor: Color(0xFF003D99),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset("assets/srm_logo.png", height: 80),
-            const SizedBox(height: 20),
-            buildDropdownField("Branch Name", ["BCA", "B.Tech", "BBA", "BCom"],
-                (value) => setState(() => selectedBranch = value)),
-            buildDropdownField(
-                "Specialization Name",
-                ["AI", "Cyber Security", "Core", "Data Science"],
-                (value) => setState(() => selectedSpecialization = value)),
-            buildTextField(
-                "Semester Year", semesterYearController, TextInputType.number),
-            buildTextField("Semester Number", semesterNumberController,
-                TextInputType.number),
-            buildTextField(
-                "Subject Name", subjectNameController, TextInputType.text),
-            buildDropdownField("Exam Type", ["End-term", "Mst-1", "Mst-2"],
-                (value) => setState(() => selectedExamType = value)),
-            buildTextField(
-                "Paper Title", paperTitleController, TextInputType.text),
-            buildTextField(
-                "Paper Year", paperYearController, TextInputType.number),
+            buildDropdown("Select Branch", branches, selectedBranch, (val) {
+              setState(() {
+                selectedBranch = val;
+                selectedSpecialization = null;
+              });
+            }),
+            SizedBox(
+              height: 8,
+            ),
+            if (selectedBranch != null)
+              buildDropdown(
+                  "Select Specialization",
+                  specializationOptions[selectedBranch] ?? [],
+                  selectedSpecialization, (val) {
+                setState(() => selectedSpecialization = val);
+              }),
+            SizedBox(
+              height: 20,
+            ),
+            buildDropdown("Select Year", years, selectedYear,
+                (val) => setState(() => selectedYear = val)),
+            SizedBox(
+              height: 20,
+            ),
+            buildDropdown("Select Semester", semesters, selectedSemester,
+                (val) => setState(() => selectedSemester = val)),
+            SizedBox(
+              height: 20,
+            ),
+            buildTextField("Enter Subject", (val) => selectedSubject = val),
+            SizedBox(
+              height: 20,
+            ),
+            buildDropdown("Select Exam Type", examTypes, selectedExamType,
+                (val) => setState(() => selectedExamType = val)),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: pickImage,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  minimumSize: const Size(200, 50)),
-              child: const Text("Choose Image", style: TextStyle(fontSize: 16)),
+              onPressed: pickFile,
+              child: const Text("Choose File"),
             ),
-            if (fileBytes != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Image.memory(fileBytes!, height: 150),
-              ),
+            if (selectedFileName != null)
+              Text("Selected File: $selectedFileName"),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: uploadPaper,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  minimumSize: const Size(200, 50)),
-              child: const Text("Submit", style: TextStyle(fontSize: 18)),
+              child: const Text("Upload Paper"),
             ),
             if (successMessage.isNotEmpty)
               Text(successMessage, style: const TextStyle(color: Colors.green)),
@@ -172,31 +187,24 @@ class _UploadPaperPageState extends State<UploadPaperPage> {
     );
   }
 
-  Widget buildDropdownField(
-      String label, List<String> options, Function(String?) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: DropdownButtonFormField<String>(
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
-        items: options
-            .map((item) => DropdownMenuItem(value: item, child: Text(item)))
-            .toList(),
-        onChanged: onChanged,
-      ),
+  Widget buildDropdown(String label, List<String> items, String? value,
+      Function(String?) onChanged) {
+    return DropdownButtonFormField<String>(
+      decoration:
+          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      value: value,
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
+      onChanged: onChanged,
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller,
-      TextInputType keyboardType) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration:
-            InputDecoration(labelText: label, border: OutlineInputBorder()),
-      ),
+  Widget buildTextField(String label, Function(String) onChanged) {
+    return TextField(
+      decoration:
+          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      onChanged: onChanged,
     );
   }
 }

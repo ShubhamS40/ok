@@ -151,8 +151,8 @@ class BranchSelection extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           children: const [
             BranchCard(label: "BCA", icon: Icons.computer),
-            BranchCard(label: "B.Tech", icon: Icons.engineering),
-            BranchCard(label: "BBA", icon: Icons.business),
+            BranchCard(label: "BTech", icon: Icons.engineering),
+            BranchCard(label: "Law", icon: Icons.gavel),
             BranchCard(label: "BCom", icon: Icons.account_balance),
           ],
         );
