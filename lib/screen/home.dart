@@ -59,15 +59,44 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.notifications,
-                                color: Colors.white, size: 24),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const LatestPaperDrawer(),
-                              );
-                            },
+                          Stack(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.notifications,
+                                    color: Colors.white, size: 24),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        const LatestPaperDrawer(),
+                                  );
+                                },
+                              ),
+                              Positioned(
+                                right: 5,
+                                top: -2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 10,
+                                    minHeight: 10,
+                                  ),
+                                  child: const Text(
+                                    '1',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -101,7 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         autoPlay: true,
                         enlargeCenterPage: true,
                       ),
-                      items: ["assets/srm.png"]
+                      items: [
+                        "assets/srm.png",
+                        "assets/srm_3.png",
+                        "assets/ban.png"
+                      ]
                           .map((imagePath) => ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.asset(

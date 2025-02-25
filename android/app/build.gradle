@@ -29,8 +29,8 @@ android {
         applicationId "com.shubham.srmpyq"
         minSdkVersion localProperties.getProperty('flutter.minSdkVersion')?.toInteger() ?: 23
         targetSdkVersion localProperties.getProperty('flutter.targetSdkVersion')?.toInteger() ?: 34
-        versionCode 6// Increment this value with each release
-        versionName "6.0"
+        versionCode 9// Increment this value with each release
+        versionName "9.0"
     }
 
     // Load the keystore file for signing (only if it exists)

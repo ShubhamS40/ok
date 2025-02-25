@@ -95,7 +95,7 @@ class LatestPaperDrawer extends StatelessWidget {
                           ListTile(
                             leading: Icon(Icons.book, color: Colors.white),
                             title: Text(
-                              "Subject: Data Structures & Algorithms",
+                              "Subject: Artificial Intelligence & Machine Learning",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -103,7 +103,7 @@ class LatestPaperDrawer extends StatelessWidget {
                             leading:
                                 Icon(Icons.calendar_today, color: Colors.white),
                             title: Text(
-                              "Year: 2023",
+                              "Year: 2024",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),

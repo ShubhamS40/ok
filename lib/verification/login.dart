@@ -72,6 +72,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> loginwithgithub() async {
+    print("Hello SHubham");
+  }
+
   Future<void> loginWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -232,6 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 15),
 
                     // Social Login Buttons
+                    // Social Login Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -241,8 +246,17 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.red),
                           iconSize: 30,
                         ),
+                        const SizedBox(width: 20), // Space between icons
+                        IconButton(
+                          onPressed:
+                              loginwithgithub, // Define this function for GitHub login
+                          icon: const FaIcon(FontAwesomeIcons.github,
+                              color: Colors.black),
+                          iconSize: 30,
+                        ),
                       ],
                     ),
+
                     const SizedBox(height: 15),
 
                     // Signup Navigation

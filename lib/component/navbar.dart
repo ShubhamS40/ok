@@ -9,30 +9,23 @@ class Navbar extends StatefulWidget {
   final String email;
   final String role;
 
-  const Navbar(
-      {super.key, required this.name, required this.email, required this.role});
+  const Navbar({
+    super.key,
+    required this.name,
+    required this.email,
+    required this.role,
+  });
 
   @override
   State<Navbar> createState() => _NavbarState();
 }
 
-class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
+class _NavbarState extends State<Navbar> {
   int _selectedIndex = 0;
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _animationController.forward(from: 0.0);
     });
   }
 
@@ -49,53 +42,117 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
     ];
 
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: pages,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      bottomNavigationBar: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Container(
+            height: 65,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home,
+                    color: _selectedIndex == 0 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'Home',
+                ),
+                const BottomNavigationBarItem(
+                  icon: SizedBox.shrink(), // Empty space for center button
+                  label: '',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person,
+                    color: _selectedIndex == 2 ? Colors.black : Colors.grey,
+                  ),
+                  label: 'Profile',
+                ),
+              ],
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.grey,
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 5,
+
+          /// Floating Hexagon Button
+          Positioned(
+            top: 0, // Adjust position to align
+            child: GestureDetector(
+              onTap: () => _onItemTapped(1),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.4),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: ClipPath(
+                  clipper: HexagonClipper(),
+                  child: Container(
+                    width: 45,
+                    height: 45,
+                    color: Colors.blue.shade900,
+                    child: const Center(
+                      child: Icon(Icons.upload, color: Colors.white, size: 28),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home,
-                  color: _selectedIndex == 0 ? Colors.blueAccent : Colors.grey),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.upload,
-                  color: _selectedIndex == 1 ? Colors.blueAccent : Colors.grey),
-              label: 'Upload',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person,
-                  color: _selectedIndex == 2 ? Colors.blueAccent : Colors.grey),
-              label: 'Profile',
-            ),
-          ],
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: true,
-          elevation: 5,
-          backgroundColor: Colors.white.withOpacity(0.8),
-          type: BottomNavigationBarType.fixed,
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+
+/// **Hexagon Shape Clipper**
+class HexagonClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    double width = size.width;
+    double height = size.height;
+
+    path.moveTo(width * 0.25, 0);
+    path.lineTo(width * 0.75, 0);
+    path.lineTo(width, height * 0.5);
+    path.lineTo(width * 0.75, height);
+    path.lineTo(width * 0.25, height);
+    path.lineTo(0, height * 0.5);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

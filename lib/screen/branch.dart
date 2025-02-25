@@ -17,7 +17,7 @@ class _BranchState extends State<Branch> {
   List<String> years = [];
   List<String> semesters = [];
   List<String> subjects = [];
-  List<String> paperTypes = ["Mst-2", "End-term", "Mst-1"];
+  List<String> paperTypes = ["MAST_2", "End-term", "MAST_1"];
 
   String? selectedSpecialization;
   String? selectedYear;
@@ -170,7 +170,8 @@ class _BranchState extends State<Branch> {
           ),
         );
       } else {
-        _showDialog("Error", "File not found.");
+        _showDialog("Process",
+            "Switch the Paper Type Choose Diffrent Paper Type Because this Subject is not Belongs to This Paper Type.");
       }
     } catch (error) {
       _showDialog("Error", "Could not connect to the server.");

@@ -37,16 +37,18 @@ class StudentReviews extends StatelessWidget {
           ),
           SizedBox(height: 12),
           SizedBox(
-            height: 250, // Adjust the height as needed
+            height: 180, // Adjust height for proper spacing
             child: ListView.builder(
-              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
               itemCount: reviews.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(right: 12.0),
                   child: _buildReviewCard(
-                      reviews[index]["name"]!, reviews[index]["review"]!),
+                    reviews[index]["name"]!,
+                    reviews[index]["review"]!,
+                  ),
                 );
               },
             ),
@@ -58,6 +60,7 @@ class StudentReviews extends StatelessWidget {
 
   Widget _buildReviewCard(String name, String review) {
     return Container(
+      width: 250, // Set fixed width for each card
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

@@ -42,6 +42,9 @@ flutter:
     - assets/ok.png
     - assets/icon.png 
     - assets/notice.jpeg 
+    - assets/srm_2.png
+    - assets/srm_3.png
+    - assets/ban.png
 
 flutter_launcher_icons:
   android: true
